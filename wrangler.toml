@@ -1,0 +1,11 @@
+name = "gc-forms-solid-start"
+compatibility_date = "2025-08-13"
+
+[site]
+bucket = "./dist/client"
+
+[build]
+command = "pnpm run build"
+
+[pages]
+project = "gc-forms-solid-start"
