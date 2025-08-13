@@ -1,26 +1,21 @@
 
+
 import { Title } from "@solidjs/meta";
-import { createResource } from "solid-js";
+import { createResource, onMount } from "solid-js";
 
 
 const TEMPLATE_ID = "cmeaj61dl0001xf01aja6mnpf";
 
-async function fetchTemplate(id: string) {
-  // Use absolute URL on the server, relative on the client
-  const isServer = typeof window === "undefined";
-  let url = `/api/templates?id=${id}`;
-  if (isServer) {
-    // Use API_BASE_URL env var set in wrangler.toml for SSR/Cloudflare
-    const base = process.env.API_BASE_URL || "http://localhost:3000";
-    url = base + url;
-  }
+async function fetchTemplateFromPublic(id: string) {
+  const url = `/data/${id}.json`;
   const res = await fetch(url);
-  if (!res.ok) throw new Error("Failed to fetch template");
+  if (!res.ok) throw new Error("Failed to fetch local template JSON");
   return res.json();
 }
 
+
 export default function About() {
-  const [template] = createResource(() => TEMPLATE_ID, fetchTemplate);
+  const [template] = createResource(() => TEMPLATE_ID, fetchTemplateFromPublic);
 
   return (
     <main>
