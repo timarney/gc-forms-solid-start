@@ -7,5 +7,6 @@ bucket = "./dist/client"
 [build]
 command = "pnpm run build"
 
-[pages]
-project = "gc-forms-solid-start"
+
+[vars]
+API_BASE_URL = "https://gc-forms-solid-start.tim-arney.workers.dev"

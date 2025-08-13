@@ -2,10 +2,11 @@
   "name": "example-basic",
   "type": "module",
   "scripts": {
-    "dev": "vinxi dev",
-    "build": "vinxi build",
-    "start": "vinxi start",
-    "version": "vinxi version"
+  "dev": "vinxi dev",
+  "build": "vinxi build",
+  "start": "vinxi start",
+  "version": "vinxi version",
+  "deploy": "wrangler deploy .output/server/index.mjs --site .output/public"
   },
   "dependencies": {
     "@gcforms/core": "^1.0.0",

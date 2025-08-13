@@ -11,6 +11,7 @@ export async function GET(event: APIEvent) {
     });
   }
   const apiUrl = `https://forms-staging.cdssandbox.xyz/api/templates/${id}`;
+  console.log(`Fetching template from ${apiUrl}`);
   const response = await fetch(apiUrl);
   if (!response.ok) {
     return new Response(JSON.stringify({ error: "Failed to fetch template" }), {
