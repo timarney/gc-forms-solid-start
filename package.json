@@ -2,11 +2,11 @@
   "name": "example-basic",
   "type": "module",
   "scripts": {
-  "dev": "vinxi dev",
-  "build": "vinxi build",
-  "start": "vinxi start",
-  "version": "vinxi version",
-  "deploy": "wrangler deploy .output/server/index.mjs --site .output/public"
+    "dev": "vinxi dev",
+    "build": "vinxi build",
+    "start": "vinxi start",
+    "version": "vinxi version",
+    "deploy": "wrangler deploy .output/server/index.mjs --site .output/public"
   },
   "dependencies": {
     "@gcforms/core": "^1.0.0",
@@ -14,6 +14,8 @@
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.0",
     "@solidjs/start": "^1.1.0",
+    "install": "^0.13.0",
+    "npm": "^11.5.2",
     "solid-js": "^1.9.5",
     "vinxi": "^0.5.7"
   },

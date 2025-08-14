@@ -18,18 +18,6 @@ export const getValueFromEvent = (e: Event) => {
   return { id: cleanId, value };
 };
 
-export function getFormRecord(template: any) {
-  const formRecord: any = {
-    id: "1234",
-    securityAttribute: "Unclassified",
-    isPublished: true,
-    form: {
-      ...template,
-    },
-  };
-  return formRecord;
-}
-
 export const parseTemplate = (template: any) => {
   // Build a map of elements by id for quick lookup
   const elementMap: Record<string, FormElement> = {};
@@ -51,7 +39,7 @@ export const parseTemplate = (template: any) => {
     ? template.layout.map(String)
     : [];
 
-  const grouped: Record<string, { group: any; elements: string[] }> = {};
+  const pages: Record<string, { group: any; elements: string[] }> = {};
   for (const groupId of groupOrder) {
     const group = template.groups[groupId];
     if (!group || !Array.isArray(group.elements)) continue;
@@ -59,10 +47,10 @@ export const parseTemplate = (template: any) => {
     const sortedElementIds = elementOrder.filter((id: string) =>
       group.elements.includes(id)
     );
-    grouped[groupId] = { group, elements: sortedElementIds };
+    pages[groupId] = { group, elements: sortedElementIds };
   }
 
-  return { elementMap, groupOrder, elementOrder, grouped };
+  return { elementMap, groupOrder, elementOrder, pages };
 };
 
 /* Wrapper function to validate form responses - to ensure signature consistency  for validateOnSubmit  */
@@ -79,7 +67,13 @@ export const validate = ({
 
   const errors = validateOnSubmit(values, {
     formRecord,
-    t: (str) => str,
+    t: (str) => {
+      const strings = {
+        "input-validation.required": "This field is required",
+      };
+      // @ts-ignore
+      return strings[str] || str;
+    },
   });
   return errors;
 };
