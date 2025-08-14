@@ -20,6 +20,8 @@ export default function Form() {
     console.log("Errors:", errors());
   });
 
+  if (!template) return <div>Loading...</div>;
+
   return (
     <>
       <gcds-heading tag="h1">

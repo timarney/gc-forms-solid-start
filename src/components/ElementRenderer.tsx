@@ -24,6 +24,7 @@ export function ElementRenderer({
 }) {
   const { properties } = element;
 
+
   switch (element.type) {
     case "richText":
       return <div>{properties.descriptionEn}</div>;
@@ -31,6 +32,7 @@ export function ElementRenderer({
       return (
         <gcds-input
           error-message={error ? error() : null}
+          required={properties?.validation?.required}
           id={`el-${element.id}`}
           input-id={element.id}
           label={properties.titleEn}
@@ -42,6 +44,7 @@ export function ElementRenderer({
       return (
         <gcds-textarea
           error-message={error ? error() : null}
+          required={properties?.validation?.required}
           id={`el-${element.id}`}
           input-id={element.id}
           textarea-id={element.id}
@@ -53,16 +56,20 @@ export function ElementRenderer({
         />
       );
     case "radio":
+      const options = getOptions(String(element.id), properties);
+      console.log("Radio options:", options);
+
       return (
         <gcds-radios
           id={`el-${element.id}`}
           error-message={error ? error() : null}
+          required={properties?.validation?.required}
           value={value || ""}
           input-id={element.id}
           name="radio"
           on:gcdsChange={handler}
           legend={properties.titleEn}
-          options={getOptions(String(element.id), properties)}
+          options={options}
         />
       );
     default:

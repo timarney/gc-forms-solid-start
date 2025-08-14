@@ -34,7 +34,12 @@ export function NextButton() {
 
     if (errorsObj && Object.keys(errorsObj).length > 0) {
       setErrors(errorsObj);
-      scrollToErrorSummary();
+
+      // Add a delay before scrolling
+      setTimeout(() => {
+        scrollToErrorSummary();
+      }, 50);
+
       return false;
     }
 

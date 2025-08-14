@@ -2,12 +2,22 @@ import { Responses, PublicFormRecord, FormElement } from "@gcforms/types";
 import { validateOnSubmit } from "@gcforms/core/process";
 
 export const scrollToErrorSummary = () => {
-  const errorSummary = document.getElementById("error-summary");
-  if (errorSummary) {
-    const rect = errorSummary.getBoundingClientRect();
-    const scrollTop = window.pageYOffset + rect.top - 20;
-    window.scrollTo({ top: scrollTop, behavior: "smooth" });
-  }
+  const errorSummary = document.querySelector("#error-summary");
+
+  if (!errorSummary) return;
+
+  // Access the shadow root
+  const shadowRoot = errorSummary.shadowRoot;
+
+  if (!shadowRoot) return;
+
+  // Find the element inside the shadow DOM
+  const summaryDiv = shadowRoot.querySelector(".gcds-error-summary");
+
+  if (!summaryDiv) return;
+
+  // @ts-ignore
+  summaryDiv.focus();
 };
 
 export const getValueFromEvent = (e: Event) => {
@@ -63,6 +73,7 @@ export const validate = ({
   currentGroup: string;
   formRecord: PublicFormRecord;
 }) => {
+  console.log("validate ==>", values);
   values.currentGroup = currentGroup;
 
   const errors = validateOnSubmit(values, {
