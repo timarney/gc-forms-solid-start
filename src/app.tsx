@@ -2,13 +2,14 @@ import { MetaProvider, Title } from "@solidjs/meta";
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
-import { TemplateProvider } from "./lib/TemplateContext";
-import formRecord from "../public/data/cmeaj61dl0001xf01aja6mnpf.json";
+import { TemplateProvider } from "~/lib/TemplateContext";
+import templateData from "./data/cmeaj61dl0001xf01aja6mnpf.json";
+
 import "./app.css";
 
 export default function App() {
   return (
-    <TemplateProvider formRecord={formRecord}>
+    <TemplateProvider formRecord={templateData}>
       <Router
         root={(props) => (
           <MetaProvider>
