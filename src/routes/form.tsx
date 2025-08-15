@@ -24,9 +24,9 @@ export default function Form() {
 
   return (
     <>
-      <gcds-heading tag="h1">
+      <h1 tabindex="-1" id="form-heading">
         {template.pages[currentGroup()]?.group?.titleEn || "Form Title"}
-      </gcds-heading>
+      </h1>
       <form class="form-container">
         <ErrorSummary />
 

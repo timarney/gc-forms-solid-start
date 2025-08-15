@@ -20,6 +20,24 @@ export const scrollToErrorSummary = () => {
   summaryDiv.focus();
 };
 
+export const focusHeading = () => {
+  const headingEl = document.getElementById("form-heading");
+  console.log("Heading Element:", headingEl);
+  if (!headingEl) return;
+
+  // scroll to the focused heading
+  headingEl.scrollIntoView({ behavior: "smooth", block: "center" });
+
+  // Make sure the heading is focusable
+  if (!headingEl.hasAttribute("tabindex")) {
+    headingEl.setAttribute("tabindex", "-1");
+  }
+
+  headingEl.focus();
+
+  console.log("Active Element:", document.activeElement);
+};
+
 export const getValueFromEvent = (e: Event) => {
   const target = e.target as HTMLInputElement;
   const id = target.id;

@@ -1,7 +1,7 @@
 import { useNavigate } from "@solidjs/router";
 
 import { useTemplate } from "~/lib/TemplateContext";
-import { scrollToErrorSummary, validate } from "~/lib/helpers";
+import { validate, scrollToErrorSummary, focusHeading } from "~/lib/helpers";
 
 export function NextButton() {
   const [signals, template, formRecord] = useTemplate();
@@ -63,6 +63,10 @@ export function NextButton() {
     } else {
       setCurrentGroup(nextAction.next);
     }
+
+    setTimeout(() => {
+      focusHeading();
+    }, 50);
   };
 
   return (
