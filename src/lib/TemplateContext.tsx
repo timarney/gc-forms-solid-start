@@ -2,6 +2,7 @@ import { createSignal } from "solid-js";
 import { createContext, useContext, JSX } from "solid-js";
 
 import { parseTemplate } from "./helpers";
+import { validate } from "./helpers";
 
 type TemplateContextType = [
   ReturnType<typeof useTemplateSignals>,
@@ -9,7 +10,7 @@ type TemplateContextType = [
   any // formRecord
 ];
 
-function useTemplateSignals() {
+function useTemplateSignals(formRecord: any) {
   const [values, setValues] = createSignal<Record<string, string>>({});
   const [errors, setErrors] = createSignal<Record<string, unknown>>({});
   const [currentGroup, setCurrentGroup] = createSignal<string>("start");
@@ -19,6 +20,14 @@ function useTemplateSignals() {
       ...prevValues,
       [val.id]: val.value,
     }));
+
+    const errors = validate({
+      values: values(),
+      currentGroup: currentGroup(),
+      formRecord,
+    });
+
+    setErrors(errors);
   };
 
   return {
@@ -42,7 +51,7 @@ type TemplateProviderProps = {
 export function TemplateProvider(props: TemplateProviderProps) {
   const formRecord = props.formRecord ?? null;
   const template = formRecord ? parseTemplate(formRecord.form) : null;
-  const signals = useTemplateSignals();
+  const signals = useTemplateSignals(formRecord);
   const value: TemplateContextType = [signals, template, formRecord];
   return (
     <TemplateContext.Provider value={value}>
