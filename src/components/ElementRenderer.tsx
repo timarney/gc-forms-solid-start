@@ -1,15 +1,4 @@
-import type { FormElement } from "@gcforms/types";
-
-/* Helpers  */
-const getOptions = (id: string, properties: any) => {
-  console.log("getOptions called with id:", id, "and properties:", properties);
-
-  return properties.choices.map((option: any, index: number) => ({
-    label: option.en,
-    id: `${id}.${index}`,
-    value: option.en,
-  }));
-};
+import type { FormElement } from "~/lib/helpers";
 
 export function ElementRenderer({
   element,
@@ -23,7 +12,6 @@ export function ElementRenderer({
   error?: () => string | null;
 }) {
   const { properties } = element;
-
 
   switch (element.type) {
     case "richText":
@@ -56,9 +44,6 @@ export function ElementRenderer({
         />
       );
     case "radio":
-      const options = getOptions(String(element.id), properties);
-      console.log("Radio options:", options);
-
       return (
         <gcds-radios
           id={`el-${element.id}`}
@@ -69,7 +54,7 @@ export function ElementRenderer({
           name="radio"
           on:gcdsChange={handler}
           legend={properties.titleEn}
-          options={options}
+          options={element.options}
         />
       );
     default:

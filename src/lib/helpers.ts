@@ -1,5 +1,11 @@
-import { Responses, PublicFormRecord, FormElement } from "@gcforms/types";
+import { Responses, PublicFormRecord, FormElement as BaseFormElement } from "@gcforms/types";
 import { validateOnSubmit } from "@gcforms/core/process";
+
+
+// Extend FormElement to have an optional options property
+export type FormElement = BaseFormElement & {
+  options?: string;
+};
 
 export const scrollToErrorSummary = () => {
   const errorSummary = document.querySelector("#error-summary");
@@ -50,6 +56,21 @@ export const parseTemplate = (template: any) => {
   // Build a map of elements by id for quick lookup
   const elementMap: Record<string, FormElement> = {};
   (template.elements as FormElement[]).forEach((el) => {
+    // For radios and checkboxes, convert choices to the required stringified format
+    if (
+      (el.type === "radio" || el.type === "checkbox") &&
+      el.properties &&
+      Array.isArray(el.properties.choices)
+    ) {
+      const choicesArr = el.properties.choices.map((option: any, idx: number) => ({
+        label: option.en,
+        id: option.id ?? `${el.id}.${idx}`,
+        value: option.value ?? option.id ?? `${el.id}.${idx}`,
+      }));
+
+      // Save choices as a stringified array so the component can just consume the property
+      el.options = JSON.stringify(choicesArr);
+    }
     // Only set static properties; do not set isVisible or value here
     elementMap[String(el.id)] = el;
   });
