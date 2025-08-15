@@ -1,5 +1,6 @@
 import { Responses, PublicFormRecord, FormElement as BaseFormElement } from "@gcforms/types";
 import { validateOnSubmit } from "@gcforms/core/process";
+import { marked } from "marked";
 
 
 // Extend FormElement to have an optional options property
@@ -70,6 +71,15 @@ export const parseTemplate = (template: any) => {
 
       // Save choices as a stringified array so the component can just consume the property
       el.options = JSON.stringify(choicesArr);
+    }
+    // For richText, convert descriptionEn from markdown to HTML
+    if (
+      el.type === "richText" &&
+      el.properties &&
+      typeof el.properties.descriptionEn === "string"
+    ) {
+      // @ts-ignore
+      el.properties.descriptionEn = marked.parse(el.properties.descriptionEn);
     }
     // Only set static properties; do not set isVisible or value here
     elementMap[String(el.id)] = el;

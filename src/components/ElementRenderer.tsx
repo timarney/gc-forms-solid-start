@@ -15,7 +15,7 @@ export function ElementRenderer({
 
   switch (element.type) {
     case "richText":
-      return <div>{properties.descriptionEn}</div>;
+      return <div innerHTML={properties.descriptionEn} />
     case "textField":
       return (
         <gcds-input
