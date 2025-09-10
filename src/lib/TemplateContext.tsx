@@ -16,8 +16,9 @@ function useTemplateSignals(formRecord: any) {
   const [visibility, setVisibility] = createSignal(new Map<string, boolean>());
   const [currentGroup, setCurrentGroup] = createSignal<string>("start");
 
-  const validate = (withErrors: boolean = false) => {
-    const { errors, visibility } = validateVisibleElements(
+  // Shared validation logic
+  const getValidationResults = () => {
+    return validateVisibleElements(
       { currentGroup: currentGroup(), ...values() },
       {
         formRecord,
@@ -30,13 +31,16 @@ function useTemplateSignals(formRecord: any) {
         },
       }
     );
+  };
 
-    if (withErrors) {
-      setErrors(errors);
-    } else {
-      setErrors({});
-    }
+  const updateVisibility = () => {
+    const { visibility } = getValidationResults();
+    setVisibility(visibility);
+  };
 
+  const validateAndSetErrors = () => {
+    const { errors, visibility } = getValidationResults();
+    setErrors(errors);
     setVisibility(visibility);
   };
 
@@ -46,10 +50,10 @@ function useTemplateSignals(formRecord: any) {
       [val.id]: val.value,
     }));
 
-    validate(true);
+    validateAndSetErrors();
   };
 
-  validate();
+  updateVisibility();
 
   return {
     values,
@@ -57,7 +61,8 @@ function useTemplateSignals(formRecord: any) {
     setValues,
     errors,
     visibility,
-    validate,
+    updateVisibility,
+    validateAndSetErrors,
     currentGroup,
     setCurrentGroup,
   };

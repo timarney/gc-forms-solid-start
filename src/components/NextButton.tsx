@@ -5,7 +5,7 @@ import { scrollToErrorSummary, focusHeading } from "~/lib/helpers";
 
 export function NextButton() {
   const [signals, template, formRecord] = useTemplate();
-  const { currentGroup, setCurrentGroup, errors, validate } = signals;
+  const { currentGroup, setCurrentGroup, errors, validateAndSetErrors, updateVisibility } = signals;
   const navigate = useNavigate();
 
   const getNextAction = (): { next: string; text: string } => {
@@ -26,7 +26,7 @@ export function NextButton() {
   };
 
   const handleValidation = () => {
-    validate(true);
+    validateAndSetErrors();
 
     if (errors() && Object.keys(errors()).length > 0) {
       // Add a delay before scrolling
@@ -54,7 +54,7 @@ export function NextButton() {
       navigate("/confirm");
     } else {
       setCurrentGroup(nextAction.next);
-      validate();
+      updateVisibility();
     }
 
     setTimeout(() => {
