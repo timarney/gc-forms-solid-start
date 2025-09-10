@@ -22,7 +22,7 @@ export default function App() {
                   alignment="right"
                 >
                   <gcds-nav-link slot="home" href="/">
-                    Demo App
+                    Forms
                   </gcds-nav-link>
                   <gcds-nav-link href="/form">View form</gcds-nav-link>
                   <gcds-nav-link href="/json">View JSON</gcds-nav-link>
