@@ -1,18 +1,20 @@
 import { createSignal } from "solid-js";
 import { createContext, useContext, JSX } from "solid-js";
 import { validateVisibleElements } from "@gcforms/core";
+import { FormRecord } from "@gcforms/types";
 
 import { parseTemplate } from "./helpers";
 
 type TemplateContextType = [
   ReturnType<typeof useTemplateSignals>,
-  any, // template
-  any // formRecord
+  ReturnType<typeof parseTemplate> | null,
+  formRecord: FormRecord,
+  parseError: string | null
 ];
 
-function useTemplateSignals(formRecord: any) {
+function useTemplateSignals(formRecord: FormRecord, parseError: string | null) {
   const [values, setValues] = createSignal<Record<string, string>>({});
-  const [errors, setErrors] = createSignal<Record<string, unknown>>({});
+  const [errors, setErrors] = createSignal<Record<string, string>>({});
   const [visibility, setVisibility] = createSignal(new Map<string, boolean>());
   const [currentGroup, setCurrentGroup] = createSignal<string>("start");
 
@@ -40,7 +42,7 @@ function useTemplateSignals(formRecord: any) {
 
   const validateAndSetErrors = () => {
     const { errors, visibility } = getValidationResults();
-    setErrors(errors);
+    setErrors(errors as Record<string, string>);
     setVisibility(visibility);
   };
 
@@ -50,10 +52,15 @@ function useTemplateSignals(formRecord: any) {
       [val.id]: val.value,
     }));
 
-    validateAndSetErrors();
+    updateVisibility();
   };
 
-  updateVisibility();
+  !parseError &&
+    formRecord &&
+    formRecord.form &&
+    (() => {
+      updateVisibility();
+    })();
 
   return {
     values,
@@ -77,9 +84,27 @@ type TemplateProviderProps = {
 
 export function TemplateProvider(props: TemplateProviderProps) {
   const formRecord = props.formRecord ?? null;
-  const template = formRecord ? parseTemplate(formRecord.form) : null;
-  const signals = useTemplateSignals(formRecord);
-  const value: TemplateContextType = [signals, template, formRecord];
+
+  let template = null;
+  let parseError = null;
+
+  if (formRecord) {
+    try {
+      template = parseTemplate(formRecord.form);
+    } catch (error) {
+      console.error("Failed to parse template:", error);
+      parseError =
+        error instanceof Error ? error.message : "Unknown parsing error";
+    }
+  }
+
+  const signals = useTemplateSignals(formRecord, parseError);
+  const value: TemplateContextType = [
+    signals,
+    template,
+    formRecord,
+    parseError,
+  ];
   return (
     <TemplateContext.Provider value={value}>
       {props.children}

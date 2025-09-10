@@ -1,4 +1,8 @@
-import { FormElement as BaseFormElement } from "@gcforms/types";
+import {
+  FormElement as BaseFormElement,
+  FormProperties,
+  Group,
+} from "@gcforms/types";
 import { marked } from "marked";
 
 // Extend FormElement to have an optional options property
@@ -51,7 +55,10 @@ export const getValueFromEvent = (e: Event) => {
   return { id: cleanId, value };
 };
 
-export const parseTemplate = (template: any) => {
+export const parseTemplate = (template: FormProperties) => {
+  if (!template.elements) {
+    throw new Error("no elements");
+  }
   // Build a map of elements by id for quick lookup
   const elementMap: Record<string, FormElement> = {};
   (template.elements as FormElement[]).forEach((el) => {
@@ -86,21 +93,21 @@ export const parseTemplate = (template: any) => {
   });
 
   // Add the start group as the first group if it doesn't exist
-  if (!template.groupsLayout.includes("start")) {
+  if (template.groupsLayout && !template.groupsLayout.includes("start")) {
     template.groupsLayout.unshift("start");
   }
 
   // Order groups by groupsLayout, fallback to Object.keys if missing
-  const groupOrder: string[] = template.groupsLayout;
+  const groupOrder: string[] = template.groupsLayout || [];
 
   // Order elements by layout
   const elementOrder: string[] = Array.isArray(template.layout)
     ? template.layout.map(String)
     : [];
 
-  const pages: Record<string, { group: any; elements: string[] }> = {};
+  const pages: Record<string, { group: Group; elements: string[] }> = {};
   for (const groupId of groupOrder) {
-    const group = template.groups[groupId];
+    const group = (template.groups && template.groups[groupId]) || null;
     if (!group || !Array.isArray(group.elements)) continue;
     // Pick group elements in the order they appear in layout
     const sortedElementIds = elementOrder.filter((id: string) =>

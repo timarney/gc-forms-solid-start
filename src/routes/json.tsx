@@ -2,7 +2,7 @@ import { Title } from "@solidjs/meta";
 import { useTemplate } from "~/lib/TemplateContext";
 
 export default function Json() {
-  const [, template] = useTemplate();
+  const [, template, formRecord] = useTemplate();
 
   return (
     <main>

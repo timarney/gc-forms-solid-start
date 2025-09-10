@@ -5,13 +5,19 @@ import { scrollToErrorSummary, focusHeading } from "~/lib/helpers";
 
 export function NextButton() {
   const [signals, template, formRecord] = useTemplate();
-  const { currentGroup, setCurrentGroup, errors, validateAndSetErrors, updateVisibility } = signals;
+  const {
+    currentGroup,
+    setCurrentGroup,
+    errors,
+    validateAndSetErrors,
+    updateVisibility,
+  } = signals;
   const navigate = useNavigate();
 
   const getNextAction = (): { next: string; text: string } => {
     if (!currentGroup()) return { next: "", text: "submit" };
 
-    const { group } = template.pages[currentGroup()];
+    const { group } = template && template.pages[currentGroup()] ? template.pages[currentGroup()] : {};
 
     if (!group) {
       return { next: "", text: "submit" };
@@ -22,14 +28,14 @@ export function NextButton() {
     if (nextAction === "review" || nextAction === "end") {
       return { next: "", text: "submit" };
     }
-    return { next: nextAction, text: "Next" };
+    return { next: nextAction as string, text: "Next" };
   };
 
-  const handleValidation = () => {
+  const validate = () => {
     validateAndSetErrors();
 
+    // Scroll to error summary if there are errors
     if (errors() && Object.keys(errors()).length > 0) {
-      // Add a delay before scrolling
       setTimeout(() => {
         scrollToErrorSummary();
       }, 50);
@@ -42,8 +48,6 @@ export function NextButton() {
 
   const handleNavigation = () => {
     const nextAction = getNextAction();
-
-    console.log("Next Action:", nextAction);
 
     if (
       nextAction.next === "" ||
@@ -66,9 +70,7 @@ export function NextButton() {
     <gcds-button
       onClick={(e: MouseEvent) => {
         e.preventDefault();
-        const isValid = handleValidation();
-
-        if (!isValid) {
+        if (!validate()) {
           return;
         }
 

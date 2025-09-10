@@ -1,4 +1,5 @@
 import { createEffect, For } from "solid-js";
+import { useNavigate } from "@solidjs/router";
 
 import { useTemplate } from "~/lib/TemplateContext";
 import { ErrorSummary } from "~/components/ErrorSummary";
@@ -8,9 +9,15 @@ import { ElementRenderer } from "~/components/ElementRenderer";
 import { getValueFromEvent } from "~/lib/helpers";
 
 export default function Form() {
-  // Get context values
-  const [signals, template] = useTemplate();
+  const navigate = useNavigate();
+  const [signals, template, , parseError] = useTemplate();
   const { values, errors, visibility, currentGroup, updateValue } = signals;
+
+  // Handle parse errors by navigating to error page
+  if (parseError) {
+    navigate("/error");
+    return <div>Redirecting to error page...</div>;
+  }
 
   createEffect(() => {
     console.log("Form Values:", values());
@@ -19,6 +26,7 @@ export default function Form() {
     console.log("Visibility:", visibility());
   });
 
+  // If template failed to parse, TemplateProvider will handle navigation to error page
   if (!template) return <div>Loading...</div>;
 
   return (
@@ -46,7 +54,6 @@ export default function Form() {
                   handler={(e: Event | CustomEvent) => {
                     updateValue(getValueFromEvent(e));
                   }}
-                  // @ts-ignore
                   error={() => errors()[elementId] || null}
                   element={element}
                 />

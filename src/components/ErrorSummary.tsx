@@ -6,7 +6,7 @@ export function ErrorSummary() {
   const { errors } = signals;
 
   const mappedErrors = (): Record<string, unknown> => {
-    return Object.keys(errors()).reduce<Record<string, unknown>>(
+    return Object.keys(errors()).reduce<Record<string, string>>(
       (acc, key) => ({
         ...acc,
         [`#el-${key}`]: errors()[key],
