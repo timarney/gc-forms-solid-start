@@ -1,4 +1,4 @@
-import { createEffect, For } from "solid-js";
+import { For } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 
 import { useTemplate } from "~/lib/TemplateContext";
@@ -19,12 +19,14 @@ export default function Form() {
     return <div>Redirecting to error page...</div>;
   }
 
+  /*
   createEffect(() => {
     console.log("Form Values:", values());
     console.log("Current Group:", currentGroup());
     console.log("Errors:", errors());
     console.log("Visibility:", visibility());
   });
+  */
 
   // If template failed to parse, TemplateProvider will handle navigation to error page
   if (!template) return <div>Loading...</div>;
@@ -36,7 +38,6 @@ export default function Form() {
       </h1>
       <form class="form-container">
         <ErrorSummary />
-
         <For
           each={template.pages[currentGroup()]?.elements.filter(
             (id: string) => {
@@ -48,16 +49,14 @@ export default function Form() {
             const element = template.elementMap[elementId];
             if (!element) return null;
             return (
-              <div>
-                <ElementRenderer
-                  value={values()[elementId] as string}
-                  handler={(e: Event | CustomEvent) => {
-                    updateValue(getValueFromEvent(e));
-                  }}
-                  error={() => errors()[elementId] || null}
-                  element={element}
-                />
-              </div>
+              <ElementRenderer
+                value={values()[elementId] as string}
+                handler={(e: Event | CustomEvent) => {
+                  updateValue(getValueFromEvent(e));
+                }}
+                error={() => errors()[elementId] || null}
+                element={element}
+              />
             );
           }}
         </For>

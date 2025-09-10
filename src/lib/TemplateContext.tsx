@@ -52,7 +52,7 @@ function useTemplateSignals(formRecord: FormRecord, parseError: string | null) {
       [val.id]: val.value,
     }));
 
-    updateVisibility();
+    validateAndSetErrors();
   };
 
   !parseError &&
