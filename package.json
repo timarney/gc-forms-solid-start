@@ -9,15 +9,15 @@
     "deploy": "wrangler deploy .output/server/index.mjs --site .output/public"
   },
   "dependencies": {
-    "@gcforms/core": "^1.0.0",
-    "@gcforms/types": "^1.0.16",
+    "@gcforms/core": "^1.0.7",
+    "@gcforms/types": "^1.0.20",
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^0.15.0",
-    "@solidjs/start": "^1.1.0",
+    "@solidjs/router": "^0.15.3",
+    "@solidjs/start": "^1.1.7",
     "install": "^0.13.0",
     "marked": "^16.1.2",
     "npm": "^11.5.2",
-    "solid-js": "^1.9.5",
+    "solid-js": "^1.9.9",
     "vinxi": "^0.5.7"
   },
   "engines": {

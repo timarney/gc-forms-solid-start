@@ -15,7 +15,7 @@ export function ElementRenderer({
 
   switch (element.type) {
     case "richText":
-      return <div innerHTML={properties.descriptionEn} />
+      return <div innerHTML={`${properties.descriptionEn} ${element.id}`} />
     case "textField":
       return (
         <gcds-input
@@ -23,7 +23,7 @@ export function ElementRenderer({
           required={properties?.validation?.required}
           id={`el-${element.id}`}
           input-id={element.id}
-          label={properties.titleEn}
+          label={`${properties.titleEn} ${element.id}`}
           value={value || ""}
           on:gcdsChange={handler}
         />
@@ -38,7 +38,7 @@ export function ElementRenderer({
           textarea-id={element.id}
           name={element.id}
           hint="Hint / Example message."
-          label={properties.titleEn}
+          label={`${properties.titleEn} ${element.id}`}
           value={value || ""}
           on:gcdsChange={handler}
         />
@@ -53,7 +53,7 @@ export function ElementRenderer({
           input-id={element.id}
           name="radio"
           on:gcdsChange={handler}
-          legend={properties.titleEn}
+          legend={`${properties.titleEn} ${element.id}`}
           options={element.options}
         />
       );

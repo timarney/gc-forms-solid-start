@@ -1,7 +1,5 @@
-import { Responses, PublicFormRecord, FormElement as BaseFormElement } from "@gcforms/types";
-import { validateOnSubmit } from "@gcforms/core/process";
+import { FormElement as BaseFormElement } from "@gcforms/types";
 import { marked } from "marked";
-
 
 // Extend FormElement to have an optional options property
 export type FormElement = BaseFormElement & {
@@ -63,11 +61,13 @@ export const parseTemplate = (template: any) => {
       el.properties &&
       Array.isArray(el.properties.choices)
     ) {
-      const choicesArr = el.properties.choices.map((option: any, idx: number) => ({
-        label: option.en,
-        id: option.id ?? `${el.id}.${idx}`,
-        value: option.value ?? option.id ?? `${el.id}.${idx}`,
-      }));
+      const choicesArr = el.properties.choices.map(
+        (option: any, idx: number) => ({
+          label: option.en,
+          id: option.id ?? `${el.id}.${idx}`,
+          value: option.en,
+        })
+      );
 
       // Save choices as a stringified array so the component can just consume the property
       el.options = JSON.stringify(choicesArr);
@@ -110,30 +110,4 @@ export const parseTemplate = (template: any) => {
   }
 
   return { elementMap, groupOrder, elementOrder, pages };
-};
-
-/* Wrapper function to validate form responses - to ensure signature consistency  for validateOnSubmit  */
-export const validate = ({
-  values,
-  currentGroup,
-  formRecord,
-}: {
-  values: Responses;
-  currentGroup: string;
-  formRecord: PublicFormRecord;
-}) => {
-  console.log("validate ==>", values);
-  values.currentGroup = currentGroup;
-
-  const errors = validateOnSubmit(values, {
-    formRecord,
-    t: (str) => {
-      const strings = {
-        "input-validation.required": "This field is required",
-      };
-      // @ts-ignore
-      return strings[str] || str;
-    },
-  });
-  return errors;
 };

@@ -1,8 +1,8 @@
 import { createSignal } from "solid-js";
 import { createContext, useContext, JSX } from "solid-js";
+import { validateVisibleElements } from "@gcforms/core";
 
 import { parseTemplate } from "./helpers";
-import { validate } from "./helpers";
 
 type TemplateContextType = [
   ReturnType<typeof useTemplateSignals>,
@@ -13,7 +13,32 @@ type TemplateContextType = [
 function useTemplateSignals(formRecord: any) {
   const [values, setValues] = createSignal<Record<string, string>>({});
   const [errors, setErrors] = createSignal<Record<string, unknown>>({});
+  const [visibility, setVisibility] = createSignal(new Map<string, boolean>());
   const [currentGroup, setCurrentGroup] = createSignal<string>("start");
+
+  const validate = (withErrors: boolean = false) => {
+    const { errors, visibility } = validateVisibleElements(
+      { currentGroup: currentGroup(), ...values() },
+      {
+        formRecord,
+        t: (str) => {
+          const strings = {
+            "input-validation.required": "This field is required",
+          };
+          // @ts-ignore
+          return strings[str] || str;
+        },
+      }
+    );
+
+    if (withErrors) {
+      setErrors(errors);
+    } else {
+      setErrors({});
+    }
+
+    setVisibility(visibility);
+  };
 
   const updateValue = (val: { id: string; value: string }) => {
     setValues((prevValues) => ({
@@ -21,23 +46,20 @@ function useTemplateSignals(formRecord: any) {
       [val.id]: val.value,
     }));
 
-    const errors = validate({
-      values: values(),
-      currentGroup: currentGroup(),
-      formRecord,
-    });
-
-    setErrors(errors);
+    validate(true);
   };
+
+  validate();
 
   return {
     values,
+    updateValue,
     setValues,
     errors,
-    setErrors,
+    visibility,
+    validate,
     currentGroup,
     setCurrentGroup,
-    updateValue,
   };
 }
 

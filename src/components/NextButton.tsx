@@ -1,11 +1,11 @@
 import { useNavigate } from "@solidjs/router";
 
 import { useTemplate } from "~/lib/TemplateContext";
-import { validate, scrollToErrorSummary, focusHeading } from "~/lib/helpers";
+import { scrollToErrorSummary, focusHeading } from "~/lib/helpers";
 
 export function NextButton() {
   const [signals, template, formRecord] = useTemplate();
-  const { values, setErrors, currentGroup, setCurrentGroup } = signals;
+  const { currentGroup, setCurrentGroup, errors, validate } = signals;
   const navigate = useNavigate();
 
   const getNextAction = (): { next: string; text: string } => {
@@ -26,15 +26,9 @@ export function NextButton() {
   };
 
   const handleValidation = () => {
-    const errorsObj = validate({
-      values: values(),
-      currentGroup: currentGroup(),
-      formRecord,
-    });
+    validate(true);
 
-    if (errorsObj && Object.keys(errorsObj).length > 0) {
-      setErrors(errorsObj);
-
+    if (errors() && Object.keys(errors()).length > 0) {
       // Add a delay before scrolling
       setTimeout(() => {
         scrollToErrorSummary();
@@ -43,8 +37,6 @@ export function NextButton() {
       return false;
     }
 
-    // reset errors
-    setErrors({});
     return true;
   };
 
@@ -62,6 +54,7 @@ export function NextButton() {
       navigate("/confirm");
     } else {
       setCurrentGroup(nextAction.next);
+      validate();
     }
 
     setTimeout(() => {

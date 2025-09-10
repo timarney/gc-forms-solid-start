@@ -1,7 +1,5 @@
 import { createEffect, For } from "solid-js";
 
-import { checkVisibilityRecursive } from "@gcforms/core/visibility";
-
 import { useTemplate } from "~/lib/TemplateContext";
 import { ErrorSummary } from "~/components/ErrorSummary";
 import { NextButton } from "~/components/NextButton";
@@ -11,13 +9,14 @@ import { getValueFromEvent } from "~/lib/helpers";
 
 export default function Form() {
   // Get context values
-  const [signals, template, formRecord] = useTemplate();
-  const { values, errors, currentGroup, updateValue } = signals;
+  const [signals, template] = useTemplate();
+  const { values, errors, visibility, currentGroup, updateValue } = signals;
 
   createEffect(() => {
     console.log("Form Values:", values());
     console.log("Current Group:", currentGroup());
     console.log("Errors:", errors());
+    console.log("Visibility:", visibility());
   });
 
   if (!template) return <div>Loading...</div>;
@@ -33,13 +32,7 @@ export default function Form() {
         <For
           each={template.pages[currentGroup()]?.elements.filter(
             (id: string) => {
-              const isVisible = checkVisibilityRecursive(
-                formRecord,
-                template.elementMap[id],
-                values(),
-                {}
-              );
-              return isVisible;
+              return visibility().get(id) === true;
             }
           )}
         >
