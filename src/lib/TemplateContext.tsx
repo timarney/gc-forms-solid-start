@@ -1,9 +1,9 @@
-import { createSignal } from "solid-js";
+import { createSignal, createMemo } from "solid-js";
 import { createContext, useContext, JSX } from "solid-js";
 import { validateVisibleElements } from "@gcforms/core";
 import { FormRecord } from "@gcforms/types";
 
-import { parseTemplate } from "./helpers";
+import { parseTemplate, translate } from "./helpers";
 
 type TemplateContextType = [
   ReturnType<typeof useTemplateSignals>,
@@ -18,30 +18,24 @@ function useTemplateSignals(formRecord: FormRecord, parseError: string | null) {
   const [visibility, setVisibility] = createSignal(new Map<string, boolean>());
   const [currentGroup, setCurrentGroup] = createSignal<string>("start");
 
-  // Shared validation logic
-  const getValidationResults = () => {
-    return validateVisibleElements(
-      { currentGroup: currentGroup(), ...values() },
-      {
-        formRecord,
-        t: (str) => {
-          const strings = {
-            "input-validation.required": "This field is required",
-          };
-          // @ts-ignore
-          return strings[str] || str;
-        },
-      }
-    );
-  };
+  const formData = createMemo(() => ({
+    currentGroup: currentGroup(),
+    ...values(),
+  }));
 
   const updateVisibility = () => {
-    const { visibility } = getValidationResults();
+    const { visibility } = validateVisibleElements(formData(), {
+      formRecord,
+      t: translate,
+    });
     setVisibility(visibility);
   };
 
   const validateAndSetErrors = () => {
-    const { errors, visibility } = getValidationResults();
+    const { errors, visibility } = validateVisibleElements(formData(), {
+      formRecord,
+      t: translate,
+    });
     setErrors(errors as Record<string, string>);
     setVisibility(visibility);
   };
@@ -55,12 +49,10 @@ function useTemplateSignals(formRecord: FormRecord, parseError: string | null) {
     validateAndSetErrors();
   };
 
-  !parseError &&
-    formRecord &&
-    formRecord.form &&
-    (() => {
-      updateVisibility();
-    })();
+  // Initialize visibility if no parse error and formRecord exists
+  if (!parseError && formRecord?.form) {
+    updateVisibility();
+  }
 
   return {
     values,

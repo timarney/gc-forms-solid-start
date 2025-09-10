@@ -118,3 +118,12 @@ export const parseTemplate = (template: FormProperties) => {
 
   return { elementMap, groupOrder, elementOrder, pages };
 };
+
+// Translate a string using the defined mapping
+export const translate = (str: string) => {
+  const strings: Record<string, string> = {
+    "input-validation.required": "This field is required",
+  };
+
+  return strings[str] || str;
+};
